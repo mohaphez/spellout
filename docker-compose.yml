@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  app:
+    build:
+      args:
+        user: lexuser
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: spellout
+    container_name: spellout-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./backend:/var/www
+    networks:
+      - spellout
+
+  nginx-backend:
+    image: nginx:alpine
+    container_name: spellout-backend-nginx
+    restart: unless-stopped
+    ports:
+      - 6000:80
+    volumes:
+      - ./backend:/var/www
+      - ./backend/docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - spellout
+
+  nginx-front:
+    image: nginx:alpine
+    container_name: spellout-front-nginx
+    restart: unless-stopped
+    ports:
+      - 6100:80
+    volumes:
+      - ./frontend:/var/www
+    networks:
+      - spellout
+
+networks:
+  spellout:
+    driver: bridge

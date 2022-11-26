@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="app.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <h1>Spelling out of Numbers</h1>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <div class='form'>
+                        <div class="form-group">
+                            <label for="number">Number:</label>
+                            <input type="number" @change="spellout()" id="number" v-model="jsonData.number">
+                        </div>
+                        <div class="form-group">
+                            <label for="language">Language:</label>
+                            <select id="language" @change="spellout()" v-model="jsonData.language">
+                                <option v-for="(language, index) in languages" :value="index">{{language}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-item" v-if="spellOutText.length > 0">
+                    <fieldset>
+                        <legend>Spell</legend>
+                        <div class="spelloutText">{{spellOutText}}</div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    const baseURL = "http://82.115.16.247:6000/api";
+    const {
+        createApp
+    } = Vue
+
+    createApp({
+        data() {
+            return {
+                spellOutText: "",
+                languages: [],
+                jsonData: {
+                    number: 0,
+                    language: ""
+                }
+            }
+        },
+        mounted() {
+            this.getLanguages();
+        },
+        methods: {
+            async getLanguages() {
+                try {
+                    const res = await fetch(`${baseURL}/languages`);
+                    if (!res.ok) {
+                        const message = `An error has occured: ${res.status}`;
+                        throw new Error(message);
+                    }
+                    const data = await res.json();
+
+                    this.languages = data.data;
+                } catch (err) {
+                    // 
+                }
+            },
+            async spellout() {
+                try {
+                    if (this.jsonData.number <= 0 || this.jsonData.language.length == 0)
+                        return;
+                    const res = await fetch(`${baseURL}/convert`, {
+                        method: "post",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(this.jsonData),
+                    });
+                    if (!res.ok) {
+                        const message = `An error has occured: ${res.status}`;
+                        throw new Error(message);
+                    }
+                    const data = await res.json();
+                    this.spellOutText = data.data.spellout
+                } catch (err) {
+                    //
+                }
+            }
+        }
+    }).mount('#app')
+</script>
+
+</html>
