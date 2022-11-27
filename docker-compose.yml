@@ -6,7 +6,7 @@ services:
       args:
         user: lexuser
         uid: 1000
-      context: ./
+      context: ./backend
       dockerfile: Dockerfile
     image: spellout
     container_name: spellout-app
@@ -14,6 +14,7 @@ services:
     working_dir: /var/www/
     volumes:
       - ./backend:/var/www
+    command: composer install --ignore-platform-reqs
     networks:
       - spellout
 
@@ -22,7 +23,7 @@ services:
     container_name: spellout-backend-nginx
     restart: unless-stopped
     ports:
-      - 6000:80
+      - 6300:80
     volumes:
       - ./backend:/var/www
       - ./backend/docker-compose/nginx:/etc/nginx/conf.d/
