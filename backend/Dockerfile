@@ -26,4 +26,8 @@ RUN mkdir -p /home/$user/.composer && \
 
 WORKDIR /var/www
 
+COPY . .
+
+RUN composer install
+
 USER $user

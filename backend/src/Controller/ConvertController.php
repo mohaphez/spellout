@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use ICU;
+use App\Data\ICU;
 use Salarmehr\Cosmopolitan\Cosmo;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -70,7 +70,8 @@ class ConvertController extends AbstractController
         ]);
         $errors = $this->validator->validate($data, $constraints);
         foreach ($errors as $error) {
-            array_push($messages, $error->message);
+            // dd($error);
+            array_push($messages, $error->getPropertyPath() . "  " . $error->getMessage());
         }
         return $messages;
     }

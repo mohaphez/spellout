@@ -14,7 +14,6 @@ services:
     working_dir: /var/www/
     volumes:
       - ./backend:/var/www
-    command: composer install --ignore-platform-reqs
     networks:
       - spellout
 
