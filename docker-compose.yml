@@ -37,6 +37,7 @@ services:
       - 6100:80
     volumes:
       - ./frontend:/var/www
+      - ./frontend/docker-compose/nginx:/etc/nginx/conf.d/
     networks:
       - spellout
 
