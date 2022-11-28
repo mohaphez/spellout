@@ -15,12 +15,12 @@
                     <div class='form'>
                         <div class="form-group">
                             <label for="number">Number:</label>
-                            <input type="number" @change="spellout()" id="number" v-model="jsonData.number">
+                            <input type="number" @input="spellout" id="number" v-model="jsonData.number">
                         </div>
                         <div class="form-group">
                             <label for="language">Language:</label>
                             <select id="language" @change="spellout()" v-model="jsonData.language">
-                                <option v-for="(language, index) in languages" :value="index">{{language}}</option>
+                                <option v-for="(language, key) in languages" :value="key">{{language}}</option>
                             </select>
                         </div>
                     </div>
@@ -65,8 +65,13 @@
                         throw new Error(message);
                     }
                     const data = await res.json();
-
-                    this.languages = data.data;
+                    // Sort Data 
+                    const UnSortLanguages = data.data
+                    this.languages = await Object.keys(UnSortLanguages).sort().reduce((accumulator,
+                        key) => {
+                        accumulator[key] = UnSortLanguages[key];
+                        return accumulator;
+                    }, {});
                 } catch (err) {
                     // 
                 }
