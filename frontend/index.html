@@ -20,7 +20,7 @@
                         <div class="form-group">
                             <label for="language">Language:</label>
                             <select id="language" @change="spellout()" v-model="jsonData.language">
-                                <option v-for="(language, key) in languages" :value="key">{{language}}</option>
+                                <option v-for="language in languages" :value="language[0]">{{language[1]}}</option>
                             </select>
                         </div>
                     </div>
@@ -57,6 +57,13 @@
             this.getLanguages();
         },
         methods: {
+            sortObject(data) {
+                return Object.keys(data).sort().reduce((accumulator,
+                    key) => {
+                    accumulator[key] = data[key];
+                    return accumulator;
+                }, {});
+            },
             async getLanguages() {
                 try {
                     const res = await fetch(`${baseURL}/languages`);
@@ -65,13 +72,7 @@
                         throw new Error(message);
                     }
                     const data = await res.json();
-                    // Sort Data 
-                    const UnSortLanguages = data.data
-                    this.languages = await Object.keys(UnSortLanguages).sort().reduce((accumulator,
-                        key) => {
-                        accumulator[key] = UnSortLanguages[key];
-                        return accumulator;
-                    }, {});
+                    this.languages = Object.entries(this.sortObject(data.data));
                 } catch (err) {
                     // 
                 }
